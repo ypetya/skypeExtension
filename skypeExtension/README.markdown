@@ -1,7 +1,12 @@
 == Overview
 
 This is just a little hack to my Skype.
-awt SysTray java 1.6 
+
+== Requirements
+
+- awt SysTray java 1.6 
+
+- skype_full.jar
 
 == Future requests
 
