@@ -21,6 +21,9 @@ public interface Plugin {
 	// this is the default item String representation in SystemTray menu
 	public String getTrayCommandName();
 	
+	public void enable();
+	public void disable();
+	
 	public boolean isMenuEnabledOnStartup();
 	
 	public boolean isSwitchable();

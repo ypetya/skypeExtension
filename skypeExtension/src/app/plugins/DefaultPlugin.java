@@ -35,6 +35,14 @@ public class DefaultPlugin implements Plugin {
 		// nothing to do
 	}
 
+	public void enable() {
+		// do nothing
+	}
+	
+	public void disable() {
+		// do nothing
+	}
+
 	public ChatMessageAdapter getChatMessageListener() {
 		// no chat message listener
 		return null;

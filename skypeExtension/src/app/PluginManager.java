@@ -42,8 +42,19 @@ public class PluginManager {
 		systray = new DefaultPlugin(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand() == DefaultPlugin.COMMAND_EXIT)
+				String action = e.getActionCommand();
+				if( action == null){
+					systray.getPopup().setEnabled(true);
+				} else if (action.equals(DefaultPlugin.COMMAND_EXIT)){
 					dispose();
+				} else if( action != null ){
+					for(Plugin p: plugins){
+						if(action.equals(p.getTrayCommandName())){
+							switchPluginState(p);
+							break;
+						}
+					}
+				}
 			}
 		});
 
@@ -64,7 +75,7 @@ public class PluginManager {
 			if (p.isMenuEnabledOnStartup())
 				enablePlugin(p);
 			else
-				switchMenuEnabledState(p, false);
+				setMenuEnabledState(p, false);
 		}
 	}
 
@@ -80,8 +91,30 @@ public class PluginManager {
 		removeChatListener(p.getChatMessageListener());
 		plugins.remove(p);
 	}
+	
+	// TODO: do not use popup loop here
+	private boolean getPluginState(Plugin p){
+		int items = systray.getPopup().getItemCount();
+		for (int i = 0; i < items; i++) {
+			Object o = systray.getPopup().getItem(i);
+			if (o instanceof CheckboxMenuItem) {
+				CheckboxMenuItem mi = (CheckboxMenuItem) o;
+				if (mi.getActionCommand() == p.getTrayCommandName()) {
+					return mi.getState();
+				}
+			}
+		}
+		return true;
+	}
+	
+	private void switchPluginState(Plugin p){
+		if(!p.isSwitchable()) return;
+		if(getPluginState(p)) disablePlugin(p);
+		else enablePlugin(p);
+	}
 
-	private void switchMenuEnabledState(Plugin p, boolean newState) {
+	// TODO: do not use popup loop here
+	private void setMenuEnabledState(Plugin p, boolean newState) {
 		int items = systray.getPopup().getItemCount();
 		for (int i = 0; i < items; i++) {
 			Object o = systray.getPopup().getItem(i);
@@ -98,13 +131,15 @@ public class PluginManager {
 	public void enablePlugin(Plugin p) {
 		checkPluginExists(p);
 		addChatListener(p.getChatMessageListener());
-		switchMenuEnabledState(p, true);
+		setMenuEnabledState(p, true);
+		p.enable();
 	}
 
 	public void disablePlugin(Plugin p) {
 		checkPluginExists(p);
 		removeChatListener(p.getChatMessageListener());
-		switchMenuEnabledState(p, false);
+		setMenuEnabledState(p, false);
+		p.disable();
 	}
 
 	private void addChatListener(ChatMessageAdapter adapter) {

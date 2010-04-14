@@ -55,6 +55,14 @@ public class TestAnswerer implements Plugin {
 	public void dispose() {
 		// do nothing
 	}
+	
+	public void enable() {
+		// do nothing
+	}
+	
+	public void disable() {
+		// do nothing
+	}
 
 	public String getTrayCommandName() {
 		return TestAnswerer.COMMAND_TEST;
