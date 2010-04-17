@@ -43,13 +43,13 @@ public class PluginManager {
 
 			public void actionPerformed(ActionEvent e) {
 				String action = e.getActionCommand();
-				if( action == null){
+				if (action == null) {
 					systray.getPopup().setEnabled(true);
-				} else if (action.equals(DefaultPlugin.COMMAND_EXIT)){
+				} else if (action.equals(DefaultPlugin.COMMAND_EXIT)) {
 					dispose();
-				} else if( action != null ){
-					for(Plugin p: plugins){
-						if(action.equals(p.getTrayCommandName())){
+				} else if (action != null) {
+					for (Plugin p : plugins) {
+						if (action.equals(p.getTrayCommandName())) {
 							switchPluginState(p);
 							break;
 						}
@@ -68,9 +68,10 @@ public class PluginManager {
 		// initialize plugin
 		p.init();
 		plugins.add(p);
-		
-		addMenuItem(p.getTrayCommandName(), p.getTrayListener(), p.isSwitchable());
-		
+
+		addMenuItem(p.getTrayCommandName(), p.getTrayListener(), p
+				.isSwitchable());
+
 		if (p.isSwitchable()) {
 			if (p.isMenuEnabledOnStartup())
 				enablePlugin(p);
@@ -91,9 +92,9 @@ public class PluginManager {
 		removeChatListener(p.getChatMessageListener());
 		plugins.remove(p);
 	}
-	
+
 	// TODO: do not use popup loop here
-	private boolean getPluginState(Plugin p){
+	private boolean getPluginState(Plugin p) {
 		int items = systray.getPopup().getItemCount();
 		for (int i = 0; i < items; i++) {
 			Object o = systray.getPopup().getItem(i);
@@ -106,11 +107,14 @@ public class PluginManager {
 		}
 		return true;
 	}
-	
-	private void switchPluginState(Plugin p){
-		if(!p.isSwitchable()) return;
-		if(getPluginState(p)) disablePlugin(p);
-		else enablePlugin(p);
+
+	private void switchPluginState(Plugin p) {
+		if (!p.isSwitchable())
+			return;
+		if (getPluginState(p))
+			disablePlugin(p);
+		else
+			enablePlugin(p);
 	}
 
 	// TODO: do not use popup loop here
@@ -188,7 +192,7 @@ public class PluginManager {
 
 		item.addActionListener(trayListener);
 		systray.getPopup().add(item);
-		if(trayListener != null)
+		if (trayListener != null)
 			addTrayListener(trayListener);
 		return item;
 	}
