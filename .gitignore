@@ -2,3 +2,5 @@
 Servers
 **/.settings
 **/bin
+.settings
+skype_full.jar
