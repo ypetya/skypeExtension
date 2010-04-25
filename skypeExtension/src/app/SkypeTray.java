@@ -35,6 +35,8 @@ public class SkypeTray {
 		if (Skype.isRunning()) {
 			PluginManager m = PluginManager.getInstance();
 			m.addPlugin(new TestAnswerer());
+			//m.addPlugin(new ClickTest());
+			//m.addPlugin(new CheckTest());
 			Skype.setDeamon(false); // to prevent exiting from this program	
 		} else {
 			System.out.println("Please start a Skype client!");

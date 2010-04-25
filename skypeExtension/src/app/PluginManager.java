@@ -4,6 +4,8 @@ import java.awt.CheckboxMenuItem;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -11,7 +13,6 @@ import java.util.NoSuchElementException;
 import app.plugins.DefaultPlugin;
 import app.plugins.Plugin;
 
-import com.skype.ChatMessageAdapter;
 import com.skype.ChatMessageListener;
 import com.skype.Skype;
 import com.skype.SkypeException;
@@ -27,39 +28,59 @@ import com.skype.SkypeException;
 public class PluginManager {
 
 	private List<Plugin> plugins = null;
-	private List<ChatMessageAdapter> chatListeners = null;
-	private List<ActionListener> trayListeners = null;
-
+	
 	private final DefaultPlugin systray;
 
 	private PluginManager() {
 		plugins = new ArrayList<Plugin>(10);
-		chatListeners = new ArrayList<ChatMessageAdapter>(10);
-		trayListeners = new ArrayList<ActionListener>(10);
-
+	
 		// creating the popup menu & handle it as a special action handler of
 		// plugin manager...
-		systray = new DefaultPlugin(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				String action = e.getActionCommand();
-				if (action == null) {
-					systray.getPopup().setEnabled(true);
-				} else if (action.equals(DefaultPlugin.COMMAND_EXIT)) {
-					dispose();
-				} else if (action != null) {
-					for (Plugin p : plugins) {
-						if (action.equals(p.getTrayCommandName())) {
-							switchPluginState(p);
-							break;
+		systray = new DefaultPlugin(
+			new ActionListener() {
+	
+				public void actionPerformed(ActionEvent e) {
+					String action = e.getActionCommand();
+					
+					if (action.equals(DefaultPlugin.COMMAND_EXIT)) {
+						dispose();
+					} else if (action != null) {
+						// search for click
+						for (Plugin p : plugins) {
+							if (action.equals(p.getTrayCommandName())) {
+								//switchPluginState(p);
+								p.click();
+								break;
+							}
 						}
 					}
 				}
-			}
-		});
+			},
+			new ItemListener(){
+	
+				public void itemStateChanged(ItemEvent e) {
+					String action = (String)e.getItem();
 
-		addPlugin(systray);
-	}
+					for (Plugin p : plugins) {
+						if (action.equals(p.getTrayCommandName())) {
+							if(e.getStateChange() == ItemEvent.SELECTED ){
+								enablePlugin(p);
+							}
+							else {
+								disablePlugin(p);
+							}
+							
+							break;
+						}
+					}
+	
+				}
+				
+			}
+			);
+	
+			addPlugin(systray);
+		}
 
 	public void addPlugin(Plugin p) {
 		if (p == null)
@@ -69,8 +90,7 @@ public class PluginManager {
 		p.init();
 		plugins.add(p);
 
-		addMenuItem(p.getTrayCommandName(), p.getTrayListener(), p
-				.isSwitchable());
+		addMenuItem(p);
 
 		if (p.isSwitchable()) {
 			if (p.isMenuEnabledOnStartup())
@@ -88,34 +108,12 @@ public class PluginManager {
 
 	public void removePlugin(Plugin p) {
 		checkPluginExists(p);
-		removeTrayListener(p.getTrayListener());
-		removeChatListener(p.getChatMessageListener());
+		p.dispose();	
 		plugins.remove(p);
+		
+		removeMenuItem(p.getTrayCommandName());
 	}
 
-	// TODO: do not use popup loop here
-	private boolean getPluginState(Plugin p) {
-		int items = systray.getPopup().getItemCount();
-		for (int i = 0; i < items; i++) {
-			Object o = systray.getPopup().getItem(i);
-			if (o instanceof CheckboxMenuItem) {
-				CheckboxMenuItem mi = (CheckboxMenuItem) o;
-				if (mi.getActionCommand() == p.getTrayCommandName()) {
-					return mi.getState();
-				}
-			}
-		}
-		return true;
-	}
-
-	private void switchPluginState(Plugin p) {
-		if (!p.isSwitchable())
-			return;
-		if (getPluginState(p))
-			disablePlugin(p);
-		else
-			enablePlugin(p);
-	}
 
 	// TODO: do not use popup loop here
 	private void setMenuEnabledState(Plugin p, boolean newState) {
@@ -134,42 +132,16 @@ public class PluginManager {
 
 	public void enablePlugin(Plugin p) {
 		checkPluginExists(p);
-		addChatListener(p.getChatMessageListener());
-		setMenuEnabledState(p, true);
+		addSkypeListener(p);
+//		setMenuEnabledState(p, true);
 		p.enable();
 	}
 
 	public void disablePlugin(Plugin p) {
 		checkPluginExists(p);
-		removeChatListener(p.getChatMessageListener());
-		setMenuEnabledState(p, false);
+		removeSkypeListener(p);
+//		setMenuEnabledState(p, false);
 		p.disable();
-	}
-
-	private void addChatListener(ChatMessageAdapter adapter) {
-		if (adapter != null) {
-			addSkypeListener(adapter);
-			chatListeners.add(adapter);
-		}
-	}
-
-	private void removeChatListener(ChatMessageAdapter adapter) {
-		if (adapter != null) {
-			if (chatListeners.remove(adapter))
-				removeSkypeListener(adapter);
-		}
-	}
-
-	private void addTrayListener(ActionListener listener) {
-		if (listener != null) {
-			trayListeners.add(listener);
-		}
-	}
-
-	private void removeTrayListener(ActionListener listener) {
-		if (listener != null) {
-			this.trayListeners.remove(listener);
-		}
 	}
 
 	private static PluginManager theManager = null;
@@ -182,19 +154,31 @@ public class PluginManager {
 		return theManager;
 	}
 
-	private MenuItem addMenuItem(String commandName,
-			ActionListener trayListener, boolean checkboxEnabled) {
-		MenuItem item = null;
-		if (checkboxEnabled)
-			item = new CheckboxMenuItem(commandName);
-		else
-			item = new MenuItem(commandName);
+	private void removeMenuItem(String commandName) {
+		int ic = systray.getPopup().getItemCount();
+		for(int i = 0; i < ic ; i++){
+			if(systray.getPopup().getItem(i).getActionCommand().equals(commandName)){
+				systray.getPopup().remove(i);
+				break;
+			}
+		}
+	}
 
-		item.addActionListener(trayListener);
-		systray.getPopup().add(item);
-		if (trayListener != null)
-			addTrayListener(trayListener);
-		return item;
+	private MenuItem addMenuItem(Plugin p) {
+		
+		if (p.isSwitchable()){
+			CheckboxMenuItem item = new CheckboxMenuItem(p.getTrayCommandName());
+			item.addItemListener(systray);
+			systray.getPopup().add(item);
+			return (MenuItem) item;
+		}
+		else{
+			MenuItem item = new MenuItem(p.getTrayCommandName());
+			item.addActionListener(systray);
+			systray.getPopup().add(item);
+			return item;
+		}
+
 	}
 
 	public static void close() {
@@ -206,10 +190,8 @@ public class PluginManager {
 		while (plugins.size() > 0) {
 			Plugin p = plugins.get(0);
 			removePlugin(p);
-			p.dispose();
 		}
 
-		System.out.println("bye!");
 		System.exit(SkypeTray.ErrorCodes.NONE);
 	}
 
