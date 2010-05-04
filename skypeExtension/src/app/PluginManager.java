@@ -90,13 +90,13 @@ public class PluginManager {
 		p.init();
 		plugins.add(p);
 
-		addMenuItem(p);
+		MenuItem mi = addMenuItem(p);
 
 		if (p.isSwitchable()) {
 			if (p.isMenuEnabledOnStartup())
 				enablePlugin(p);
 			else
-				setMenuEnabledState(p, false);
+				((CheckboxMenuItem)mi).setState(false);
 		}
 	}
 
@@ -108,39 +108,20 @@ public class PluginManager {
 
 	public void removePlugin(Plugin p) {
 		checkPluginExists(p);
+		removeMenuItem(p.getTrayCommandName());
 		p.dispose();	
 		plugins.remove(p);
-		
-		removeMenuItem(p.getTrayCommandName());
-	}
-
-
-	// TODO: do not use popup loop here
-	private void setMenuEnabledState(Plugin p, boolean newState) {
-		int items = systray.getPopup().getItemCount();
-		for (int i = 0; i < items; i++) {
-			Object o = systray.getPopup().getItem(i);
-			if (o instanceof CheckboxMenuItem) {
-				CheckboxMenuItem mi = (CheckboxMenuItem) o;
-				if (mi.getActionCommand() == p.getTrayCommandName()) {
-					mi.setState(newState);
-					break;
-				}
-			}
-		}
 	}
 
 	public void enablePlugin(Plugin p) {
 		checkPluginExists(p);
 		addSkypeListener(p);
-//		setMenuEnabledState(p, true);
 		p.enable();
 	}
 
 	public void disablePlugin(Plugin p) {
 		checkPluginExists(p);
 		removeSkypeListener(p);
-//		setMenuEnabledState(p, false);
 		p.disable();
 	}
 
@@ -155,6 +136,7 @@ public class PluginManager {
 	}
 
 	private void removeMenuItem(String commandName) {
+		if(systray.getPopup() == null) return;
 		int ic = systray.getPopup().getItemCount();
 		for(int i = 0; i < ic ; i++){
 			if(systray.getPopup().getItem(i).getActionCommand().equals(commandName)){
@@ -170,7 +152,7 @@ public class PluginManager {
 			CheckboxMenuItem item = new CheckboxMenuItem(p.getTrayCommandName());
 			item.addItemListener(systray);
 			systray.getPopup().add(item);
-			return (MenuItem) item;
+			return item;
 		}
 		else{
 			MenuItem item = new MenuItem(p.getTrayCommandName());

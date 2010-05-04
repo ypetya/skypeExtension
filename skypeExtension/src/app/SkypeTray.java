@@ -2,6 +2,7 @@ package app;
 
 import java.awt.SystemTray;
 
+import app.plugins.NewlAggregator;
 import app.plugins.TestAnswerer;
 
 import com.skype.Skype;
@@ -14,7 +15,7 @@ public class SkypeTray {
 
 		public static final int NONE = 0;
 		public static final int CAN_NOT_ADD_LISTENER = 1;
-		public static final int CAN_NOT_FOUND_SKYPE_INSTANCE = 2;
+		public static final int CAN_NOT_FIND_SKYPE_INSTANCE = 2;
 		public static final int TRAY_ICON_NOT_SUPPORTED = 3;
 		public static final int TRAY_ICON_ERROR = 4;
 	}
@@ -35,12 +36,13 @@ public class SkypeTray {
 		if (Skype.isRunning()) {
 			PluginManager m = PluginManager.getInstance();
 			m.addPlugin(new TestAnswerer());
+			m.addPlugin(new NewlAggregator());
 			//m.addPlugin(new ClickTest());
 			//m.addPlugin(new CheckTest());
 			Skype.setDeamon(false); // to prevent exiting from this program	
 		} else {
 			System.out.println("Please start a Skype client!");
-			System.exit(SkypeTray.ErrorCodes.CAN_NOT_FOUND_SKYPE_INSTANCE);
+			System.exit(SkypeTray.ErrorCodes.CAN_NOT_FIND_SKYPE_INSTANCE);
 		}		
 	}
 	

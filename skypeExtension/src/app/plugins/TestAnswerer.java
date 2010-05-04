@@ -48,11 +48,7 @@ public class TestAnswerer implements Plugin {
 	}
 
 	public void chatMessageReceived(ChatMessage received) throws SkypeException {
-		if (received.getType().equals(ChatMessage.Type.SAID)) {
-
-			received.getSender().send(
-					"I'm working. Please, wait a moment. :)");
-		}		
+		received.getSender().send("I'm working. Please, wait a moment. :)");
 	}
 	
 }
