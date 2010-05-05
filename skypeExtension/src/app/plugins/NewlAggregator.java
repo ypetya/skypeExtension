@@ -101,6 +101,7 @@ public class NewlAggregator implements Plugin {
 			wr.write(sb.toString());
 			wr.flush();
 			// Now copy bytes from the URL to the output stream
+			@SuppressWarnings("unused")
 			String line;
 			rd = new BufferedReader(
 					new InputStreamReader(conn.getInputStream()));
