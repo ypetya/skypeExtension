@@ -15,7 +15,7 @@ import com.skype.SkypeException;
 
 public class NewlAggregator implements Plugin {
 
-	private static final String COMMAND_NEWL_AGGREGATOR = "Newl aggregator";
+	private static final String COMMAND_NEWL_AGGREGATOR = "aggregator";
 
 	private String[] urlBlacklist = { "local", "http://[0-9.]+[/:]", "virgo",
 			"ypetya", "admin", "sandbox", "szarka", "netpincer", "blackbox",
