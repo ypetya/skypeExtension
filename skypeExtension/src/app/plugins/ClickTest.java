@@ -11,8 +11,9 @@ public class ClickTest implements Plugin {
 		return COMMAND_CLICK_ME;
 	}
 
-	public void init() {
-		System.out.println("nothing to init");		
+	public boolean init() {
+		System.out.println("nothing to init");
+		return true;
 	}
 	
 	public void dispose() {

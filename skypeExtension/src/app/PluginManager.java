@@ -93,8 +93,10 @@ public class PluginManager {
 		MenuItem mi = addMenuItem(p);
 
 		if (p.isSwitchable()) {
-			if (p.isMenuEnabledOnStartup())
+			if (p.isMenuEnabledOnStartup()){
 				enablePlugin(p);
+				((CheckboxMenuItem)mi).setState(true);
+			}
 			else
 				((CheckboxMenuItem)mi).setState(false);
 		}

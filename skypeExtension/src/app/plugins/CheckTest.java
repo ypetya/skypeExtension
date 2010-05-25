@@ -11,8 +11,9 @@ public class CheckTest implements Plugin {
 		return COMMAND_CHECK_TEST;
 	}
 
-	public void init() {
+	public boolean init() {
 		System.out.println("nothing to init");
+		return true;
 	}
 	
 	public void dispose() {

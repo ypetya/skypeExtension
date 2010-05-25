@@ -2,6 +2,7 @@ package app;
 
 import java.awt.SystemTray;
 
+import app.plugins.Netpincer;
 import app.plugins.NewlAggregator;
 import app.plugins.TestAnswerer;
 
@@ -35,8 +36,9 @@ public class SkypeTray {
 		}
 		if (Skype.isRunning()) {
 			PluginManager m = PluginManager.getInstance();
-			m.addPlugin(new TestAnswerer());
 			m.addPlugin(new NewlAggregator());
+			m.addPlugin(new Netpincer());
+			m.addPlugin(new TestAnswerer());
 			//m.addPlugin(new ClickTest());
 			//m.addPlugin(new CheckTest());
 			Skype.setDeamon(false); // to prevent exiting from this program	

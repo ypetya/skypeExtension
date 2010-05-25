@@ -38,7 +38,7 @@ public class DefaultPlugin implements Plugin, ActionListener, ItemListener {
 		defaultCheckedTrayListener = systrayCheck;
 	}
 
-	public void init() {
+	public boolean init() {
 		
 		// load an image
 		File icon = new File(DefaultPlugin.ICON_TRAY);
@@ -58,33 +58,6 @@ public class DefaultPlugin implements Plugin, ActionListener, ItemListener {
 		
 		trayIcon = new TrayIcon(image, "Skype bot", popup);
 		trayIcon.addActionListener(defaultTrayListener);
-/*
-		// this will show up popup
-		trayIcon.addMouseListener(new MouseListener(){
-
-			public void mouseClicked(MouseEvent arg0) {}
-
-			public void mouseEntered(MouseEvent arg0) {}
-
-			public void mouseExited(MouseEvent arg0) {}
-
-			 public void mousePressed(MouseEvent e) {
-			        maybeShowPopup(e);
-			    }
-
-			    public void mouseReleased(MouseEvent e) {
-			        maybeShowPopup(e);
-			    }
-
-			    private void maybeShowPopup(MouseEvent e) {
-			        if (e.isPopupTrigger()) {
-			            popup.show(e.getComponent(),
-			                       e.getX(), e.getY());
-			        }
-			    }
-			}
-		);
-*/
 		
 		try {
 			SystemTray tray = SystemTray.getSystemTray();
@@ -93,6 +66,7 @@ public class DefaultPlugin implements Plugin, ActionListener, ItemListener {
 			System.err.println(e);
 		}
 
+		return true;
 	}
 	
 	public void dispose() {
@@ -143,4 +117,6 @@ public class DefaultPlugin implements Plugin, ActionListener, ItemListener {
 	public void itemStateChanged(ItemEvent e) {
 		defaultCheckedTrayListener.itemStateChanged(e);
 	}
+	
+	
 }

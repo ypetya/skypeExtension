@@ -5,7 +5,8 @@ import com.skype.ChatMessageListener;
 public interface Plugin extends ChatMessageListener {
 
 	// this will called on plugin initialization
-	public void init();
+	// returns true if successed
+	public boolean init();
 	
 	// this will called on program exit
 	public void dispose();

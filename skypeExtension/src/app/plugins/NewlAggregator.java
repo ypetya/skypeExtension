@@ -26,8 +26,9 @@ public class NewlAggregator implements Plugin {
 		return COMMAND_NEWL_AGGREGATOR;
 	}
 
-	public void init() {
+	public boolean init() {
 		// TODO Auto-generated method stub
+		return true;
 	}
 
 	public void dispose() {
@@ -48,7 +49,7 @@ public class NewlAggregator implements Plugin {
 	}
 
 	public boolean isMenuEnabledOnStartup() {
-		return false;
+		return true;
 	}
 
 	public boolean isSwitchable() {

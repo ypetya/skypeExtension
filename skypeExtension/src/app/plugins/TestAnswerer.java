@@ -16,8 +16,9 @@ public class TestAnswerer implements Plugin {
 		return TestAnswerer.COMMAND_TEST;
 	}
 	
-	public void init() {
+	public boolean init() {
 		// do nothing
+		return true;
 	}
 	
 	public void dispose() {
