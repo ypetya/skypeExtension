@@ -49,7 +49,7 @@ public class Netpincer implements Plugin {
 		Matcher matcher = pattern.matcher(msg);
 		
 		if(matcher.find()){
-			received.getSender().send("Netpincer session detected: Looking for hawaii pizzas... (bandit)");
+			received.getChat().send("Netpincer session detected: Looking for hawaii pizzas... (bandit)");
 		}
 		
 	}
