@@ -4,6 +4,7 @@ import java.awt.SystemTray;
 
 import app.plugins.Netpincer;
 import app.plugins.NewlAggregator;
+import app.plugins.NewlAggregatorFromHistory;
 import app.plugins.TestAnswerer;
 
 import com.skype.Skype;
@@ -37,6 +38,7 @@ public class SkypeTray {
 		if (Skype.isRunning()) {
 			PluginManager m = PluginManager.getInstance();
 			m.addPlugin(new NewlAggregator());
+			m.addPlugin(new NewlAggregatorFromHistory());
 			m.addPlugin(new Netpincer());
 			m.addPlugin(new TestAnswerer());
 			//m.addPlugin(new ClickTest());

@@ -17,7 +17,7 @@ public class NewlAggregator implements Plugin {
 
 	private static final String COMMAND_NEWL_AGGREGATOR = "aggregator";
 
-	private String[] urlBlacklist = { "local", "http://[0-9.]+[/:]", "virgo",
+	private static final String[] urlBlacklist = { "local", "http://[0-9.]+[/:]", "virgo",
 			"ypetya", "admin", "sandbox", "szarka", "netpincer", "blackbox",
 			"svn", "authkey=\\w+&", "iwiw", "zoldseg", "gtk", "eleventyone",
 			"zanz.*itori", "^http[s]*://\\s*$" };
@@ -55,8 +55,8 @@ public class NewlAggregator implements Plugin {
 	public boolean isSwitchable() {
 		return true;
 	}
-
-	public void chatMessageReceived(ChatMessage received) throws SkypeException {
+	
+	public static void handleMessage(ChatMessage received) throws SkypeException {
 		// Recognize Url
 		String msg = received.getContent();
 
@@ -68,13 +68,16 @@ public class NewlAggregator implements Plugin {
 			storeUrl(msg.substring(matcher.start(), matcher.end()), received
 					.getSenderDisplayName());
 		}
+	}
 
+	public void chatMessageReceived(ChatMessage received) throws SkypeException {
+		handleMessage(received);
 	}
 
 	// post url if it is not blacklisted
-	private void storeUrl(String url, String userName) {
+	private static void storeUrl(String url, String userName) {
 		// Blacklist check
-		for (String black : this.urlBlacklist) {
+		for (String black : urlBlacklist) {
 			Pattern pattern = Pattern.compile(black);
 			Matcher matcher = pattern.matcher(url);
 			if (matcher.find())
