@@ -1,5 +1,6 @@
 package app.plugins;
 
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +42,13 @@ public class Netpincer implements Plugin {
 	public boolean isSwitchable() {
 		return true;
 	}
+	
+	private static final String[] things = { "hawai pizzas", "cola zero", "darálthús", "vegetables" };
+	
+	public String getRandomThing() {
+		Random r = new Random();
+		return things[ r.nextInt(things.length) ];
+	}
 
 	public void chatMessageReceived(ChatMessage received) throws SkypeException {
 		String msg = received.getContent();
@@ -49,7 +57,7 @@ public class Netpincer implements Plugin {
 		Matcher matcher = pattern.matcher(msg);
 		
 		if(matcher.find()){
-			received.getChat().send("Netpincer session detected: Looking for hawaii pizzas... (bandit)");
+			received.getChat().send("Netpincer session detected: Looking for " + getRandomThing() + "... (bandit)");
 		}
 		
 	}
