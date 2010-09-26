@@ -9,29 +9,25 @@ import com.skype.SkypeException;
 
 public class Netpincer implements Plugin {
 
+	private static final String TITLE = "netpincer";
+
 	public void click() {
-		// TODO Auto-generated method stub
 	}
 
 	public void disable() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
 	}
 
 	public void enable() {
-		// TODO Auto-generated method stub
 	}
 
 	public String getTrayCommandName() {
-		return "netpincer";
+		return TITLE;
 	}
 
 	public boolean init() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -63,7 +59,6 @@ public class Netpincer implements Plugin {
 	}
 
 	public void chatMessageSent(ChatMessage arg0) throws SkypeException {
-		// TODO Auto-generated method stub
 	}
 
 }

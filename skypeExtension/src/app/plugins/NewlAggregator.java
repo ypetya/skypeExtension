@@ -20,32 +20,26 @@ public class NewlAggregator implements Plugin {
 	private static final String[] urlBlacklist = { "local", "http://[0-9.]+[/:]", "virgo",
 			"ypetya", "admin", "sandbox", "szarka", "netpincer", "blackbox",
 			"svn", "authkey=\\w+&", "iwiw", "zoldseg", "gtk", "eleventyone",
-			"zanz.*itori", "^http[s]*://\\s*$" };
+			"zanz.*itori", "^http[s]*://\\s*$", "dogzo", "appspot", "heroku" };
 
 	public String getTrayCommandName() {
 		return COMMAND_NEWL_AGGREGATOR;
 	}
 
 	public boolean init() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
 	}
 
 	public void click() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void enable() {
-		// TODO Auto-generated method stub
 	}
 
 	public void disable() {
-		// TODO Auto-generated method stub
 	}
 
 	public boolean isMenuEnabledOnStartup() {
