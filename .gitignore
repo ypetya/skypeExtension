@@ -4,8 +4,8 @@
 /nbproject
 /build.xml
 .metadata
-Servers
+/Servers
 **/.settings
 **/bin
-.settings
-skype_full.jar
+/.settings
+/skype_full.jar
