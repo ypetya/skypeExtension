@@ -176,7 +176,7 @@ public class PluginManager {
 			removePlugin(p);
 		}
 
-		System.exit(SkypeTray.ErrorCodes.NONE);
+		System.exit(SkypeTray.ErrorCodes.NONE.getValue());
 	}
 
 	private void addSkypeListener(ChatMessageListener chatListener) {
@@ -184,7 +184,7 @@ public class PluginManager {
 			Skype.addChatMessageListener(chatListener);
 		} catch (SkypeException se) {
 			System.out.println("Can not add listener.");
-			System.exit(SkypeTray.ErrorCodes.CAN_NOT_ADD_LISTENER);
+			System.exit(SkypeTray.ErrorCodes.CAN_NOT_ADD_LISTENER.getValue());
 		}
 	}
 

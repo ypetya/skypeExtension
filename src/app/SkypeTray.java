@@ -12,14 +12,16 @@ import com.skype.Skype;
 public class SkypeTray {
 
 	
-	public static final class ErrorCodes {
-		private ErrorCodes() {}
-
-		public static final int NONE = 0;
-		public static final int CAN_NOT_ADD_LISTENER = 1;
-		public static final int CAN_NOT_FIND_SKYPE_INSTANCE = 2;
-		public static final int TRAY_ICON_NOT_SUPPORTED = 3;
-		public static final int TRAY_ICON_ERROR = 4;
+	public static enum ErrorCodes {
+		NONE,
+		CAN_NOT_ADD_LISTENER,
+		CAN_NOT_FIND_SKYPE_INSTANCE,
+		TRAY_ICON_NOT_SUPPORTED,
+		TRAY_ICON_ERROR;
+		
+		public int getValue() {
+			return this.ordinal();
+		}
 	}
 
 	/**
@@ -33,7 +35,7 @@ public class SkypeTray {
 			// disable tray option in your application or
 			// perform other actions
 			System.out.println("System tray not supported");
-			System.exit(SkypeTray.ErrorCodes.TRAY_ICON_NOT_SUPPORTED);
+			System.exit(SkypeTray.ErrorCodes.TRAY_ICON_NOT_SUPPORTED.getValue());
 		}
 		if (Skype.isRunning()) {
 			PluginManager m = PluginManager.getInstance();
@@ -46,7 +48,7 @@ public class SkypeTray {
 			Skype.setDeamon(false); // to prevent exiting from this program	
 		} else {
 			System.out.println("Please start a Skype client!");
-			System.exit(SkypeTray.ErrorCodes.CAN_NOT_FIND_SKYPE_INSTANCE);
+			System.exit(SkypeTray.ErrorCodes.CAN_NOT_FIND_SKYPE_INSTANCE.getValue());
 		}		
 	}
 	

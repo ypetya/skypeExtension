@@ -47,10 +47,10 @@ public class DefaultPlugin implements Plugin, ActionListener, ItemListener {
 			image = ImageIO.read(icon); // new Image
 		} catch (TypeNotPresentException te) {
 			System.out.println("Invalid tray icon.");
-			System.exit(SkypeTray.ErrorCodes.TRAY_ICON_ERROR);
+			System.exit(SkypeTray.ErrorCodes.TRAY_ICON_ERROR.getValue());
 		} catch (IOException e) {
 			System.out.println("Invalid tray icon.");
-			System.exit(SkypeTray.ErrorCodes.TRAY_ICON_ERROR);
+			System.exit(SkypeTray.ErrorCodes.TRAY_ICON_ERROR.getValue());
 		}
 		
 		// create a popup menu

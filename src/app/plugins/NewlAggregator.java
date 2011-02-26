@@ -20,7 +20,7 @@ public class NewlAggregator implements Plugin {
 	private static final String[] urlBlacklist = { "local", "http://[0-9.]+[/:]", "virgo",
 			"ypetya", "admin", "sandbox", "szarka", "netpincer", "blackbox",
 			"svn", "authkey=\\w+&", "iwiw", "zoldseg", "gtk", "eleventyone",
-			"zanz.*itori", "^http[s]*://\\s*$", "dogzo", "appspot", "heroku" };
+			"zanz.*itori", "^http[s]*://\\s*$", "dogzo", "appspot", "heroku", "subba", "puruttya" };
 
 	public String getTrayCommandName() {
 		return COMMAND_NEWL_AGGREGATOR;
@@ -99,12 +99,11 @@ public class NewlAggregator implements Plugin {
 			wr.write(sb.toString());
 			wr.flush();
 			// Now copy bytes from the URL to the output stream
-			@SuppressWarnings("unused")
-			String line;
-			rd = new BufferedReader(
-					new InputStreamReader(conn.getInputStream()));
-			while ((line = rd.readLine()) != null)
-				;
+			
+			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			while (rd.readLine() != null);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
