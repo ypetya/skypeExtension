@@ -2,9 +2,11 @@ package app;
 
 import java.awt.SystemTray;
 
+import app.PluginManager;
+import app.plugins.Aggregator;
+import app.plugins.AggregatorFromHistory;
+import app.plugins.ChatHistory;
 import app.plugins.Netpincer;
-import app.plugins.NewlAggregator;
-import app.plugins.NewlAggregatorFromHistory;
 import app.plugins.TestAnswerer;
 
 import com.skype.Skype;
@@ -39,10 +41,11 @@ public class SkypeTray {
 		}
 		if (Skype.isRunning()) {
 			PluginManager m = PluginManager.getInstance();
-			m.addPlugin(new NewlAggregator());
-			m.addPlugin(new NewlAggregatorFromHistory());
+			m.addPlugin(new Aggregator());
+			m.addPlugin(new AggregatorFromHistory());
 			m.addPlugin(new Netpincer());
 			m.addPlugin(new TestAnswerer());
+			m.addPlugin(new ChatHistory());
 			//m.addPlugin(new ClickTest());
 			//m.addPlugin(new CheckTest());
 			Skype.setDeamon(false); // to prevent exiting from this program	

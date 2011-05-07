@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import com.skype.ChatMessage;
 import com.skype.SkypeException;
 
-public class NewlAggregator implements Plugin {
+public class Aggregator implements Plugin {
 
 	private static final String COMMAND_NEWL_AGGREGATOR = "aggregator";
 

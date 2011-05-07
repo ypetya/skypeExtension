@@ -13,9 +13,9 @@ import com.skype.Friend;
 import com.skype.Skype;
 import com.skype.SkypeException;
 
-public class NewlAggregatorFromHistory implements Plugin {
+public class AggregatorFromHistory implements Plugin {
 
-	private static final String COMMAND_IMPORT_HISTORY = "import history (1 month)";
+	private static final String COMMAND_IMPORT_HISTORY = "aggregator import history (1 month)";
 	private static Thread historyHandler = null;
 	private static boolean stop = false;
 
@@ -24,7 +24,7 @@ public class NewlAggregatorFromHistory implements Plugin {
 		return COMMAND_IMPORT_HISTORY;
 	}
 
-	/** when click arrives start an importer thread if it is not running yet */
+	/** when click arrives start an importer thread unless it is running */
 	@Override
 	public void click() {
 		if (historyHandler == null) {
@@ -71,7 +71,7 @@ public class NewlAggregatorFromHistory implements Plugin {
 								return;
 							try {
 								// NOTE: server side will keep a track of duplicates
-								NewlAggregator.handleMessage(cm);
+								Aggregator.handleMessage(cm);
 								if (counter++ % 5 == 0) {
 									Thread.sleep(1000);
 									System.out.println("handled " + counter + " messages");
