@@ -6,16 +6,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 
+import com.skype.Chat;
 import com.skype.ChatMessage;
 import com.skype.SkypeException;
 import com.skype.User;
 
 public class ChatHistory implements Plugin {
 
+	private final String userDir = System.getProperty("user.dir") + "\\";
 	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 	boolean enabled;
 	
@@ -81,16 +81,8 @@ public class ChatHistory implements Plugin {
 		sb.append(user.getBirthDay());
 		sb.append("\n");
 		
-		sb.append("about : ");
-		sb.append(user.getAbout());
-		sb.append("\n");
-		
 		sb.append("sex : ");
 		sb.append(user.getSex());
-		sb.append("\n");
-		
-		sb.append("language : ");
-		sb.append(user.getLauguage());
 		sb.append("\n");
 		
 		sb.append("country : ");
@@ -109,31 +101,27 @@ public class ChatHistory implements Plugin {
 		sb.append(user.getHomePageAddress());
 		sb.append("\n");
 		
-		sb.append("home phone : ");
-		sb.append(user.getHomePhone());
+		sb.append("=====");
 		sb.append("\n");
-
-		sb.append("mobile phone : ");
-		sb.append(user.getMobilePhone());
-		sb.append("\n");
-		
-		sb.append("office phone : ");
-		sb.append(user.getOfficePhone());
-		sb.append("\n");
+	}
+	
+	private void logMessage(StringBuilder sb, ChatMessage m) throws SkypeException {
+		sb.append(dateForLog(m.getTime()));
+		sb.append(" ");
+		sb.append(m.getSenderDisplayName());
+		sb.append(" :\t");
+		sb.append(m.getContent());
 	}
 	
 	private void logMessageToFile(File f, ChatMessage m) {
 		if(f.exists() && f.canWrite()) {
 			try {
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f)));
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f,true)));
 				
 				try {
 					StringBuilder sb = new StringBuilder();
-					sb.append(dateForLog(m.getTime()));
-					sb.append(" ");
-					sb.append(m.getSenderDisplayName());
-					sb.append(" :\t");
-					sb.append(m.getContent());
+				
+					logMessage(sb, m);
 					
 					out.println( sb.toString());
 				}
@@ -154,12 +142,15 @@ public class ChatHistory implements Plugin {
 					sb.append("created : ");
 					sb.append(dateForLog(m.getTime()));
 					sb.append("\n");
-					User[] users = m.getAllUsers();
+					Chat c = m.getChat();
+					User[] users = c.getAllMembers();
 					for(User u: users) {
 						expandUserInfo(sb, u);
 					}
 					
-					sb.append("\n==\n\n");
+					sb.append("\n=====\n\n");
+					
+					logMessage(sb, m);
 					
 					out.println( sb.toString());
 				}
@@ -174,17 +165,11 @@ public class ChatHistory implements Plugin {
 	}
 	
 	private String generateFileName(ChatMessage m) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(userDir);
 		try {
-			User[] users = m.getAllUsers();
-			Iterator<User> it = Arrays.asList(users).iterator();
-			while(it.hasNext()) {
-				User u = it.next();
-				sb.append(u.getId());
-				if(it.hasNext()) {
-					sb.append("_");
-				}
-			}
+			String id = m.getChat().getId();
+			id = id.replaceAll("[#/$;]", "_");
+			sb.append(id);
 			
 		} catch (SkypeException e) {
 			return "Exception.txt";
