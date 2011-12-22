@@ -1,7 +1,7 @@
 Overview
 ========
 
-This is just a little hack to my Skype.
+This is just a tiny hack to my Skype.
 
 Requirements
 ============
