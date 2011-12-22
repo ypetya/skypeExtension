@@ -1,4 +1,4 @@
-package app.plugins;
+package app.plugins.base;
 
 import com.skype.ChatMessageListener;
 
@@ -21,5 +21,7 @@ public interface Plugin extends ChatMessageListener {
 	public void enable();
 	public void disable();
 	// else
-	public void click();	
+	public void click();
+	
+	public boolean isEnabled();
 }

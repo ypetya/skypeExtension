@@ -9,9 +9,12 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.TreeSet;
 
+import app.console.ErrorCodes;
 import app.plugins.DefaultPlugin;
-import app.plugins.Plugin;
+import app.plugins.base.Plugin;
 
 import com.skype.ChatMessageListener;
 import com.skype.Skype;
@@ -25,62 +28,103 @@ import com.skype.SkypeException;
  * 2. Handle Actionhandlers for both of SystemTray and skype actions.
  * 3. Unload plugins on exit
  * */
-public class PluginManager {
+public class PluginManager implements PluginEventInteface {
 
 	private List<Plugin> plugins = null;
-	
-	private final DefaultPlugin systray;
+
+	private DefaultPlugin systray;
+
+	private final boolean useAwt;
 
 	private PluginManager() {
+		useAwt = true;
+		init();
+	}
+
+	private PluginManager(boolean useAwt) {
+		this.useAwt = useAwt;
+		init();
+	}
+
+	private void init() {
 		plugins = new ArrayList<Plugin>(10);
-	
-		// creating the popup menu & handle it as a special action handler of
-		// plugin manager...
-		systray = new DefaultPlugin(
-			new ActionListener() {
-	
+
+		if (useAwt) {
+			// creating the popup menu & handle it as a special action handler
+			// of
+			// plugin manager...
+			systray = new DefaultPlugin(new ActionListener() {
+
 				public void actionPerformed(ActionEvent e) {
 					String action = e.getActionCommand();
-					
-					if (action.equals(DefaultPlugin.COMMAND_EXIT)) {
-						dispose();
-					} else if (action != null) {
-						// search for click
-						for (Plugin p : plugins) {
-							if (action.equals(p.getTrayCommandName())) {
-								//switchPluginState(p);
-								p.click();
-								break;
-							}
-						}
-					}
+					eventActionPerformed(action);
 				}
-			},
-			new ItemListener(){
-	
-				public void itemStateChanged(ItemEvent e) {
-					String action = (String)e.getItem();
+			}, new ItemListener() {
 
-					for (Plugin p : plugins) {
-						if (action.equals(p.getTrayCommandName())) {
-							if(e.getStateChange() == ItemEvent.SELECTED ){
-								enablePlugin(p);
-							}
-							else {
-								disablePlugin(p);
-							}
-							
-							break;
-						}
-					}
-	
+				public void itemStateChanged(ItemEvent e) {
+					String action = (String) e.getItem();
+
+					eventItemStateChanged(action, e.getStateChange() == ItemEvent.SELECTED);
 				}
-				
-			}
-			);
-	
-			addPlugin(systray);
+
+			});
+		} else {
+			// we do not need default plugin to handle awt events
+			// no awt mode does not uses awt events
 		}
+
+		addPlugin(systray);
+	}
+
+	// non awt events
+	@Override
+	public synchronized void eventActionPerformed(String action) {
+		if (action.equals(DefaultPlugin.COMMAND_EXIT)) {
+			dispose();
+		} else if (action != null) {
+			// search for click
+			for (Plugin p : plugins) {
+				if (action.equals(p.getTrayCommandName())) {
+					// switchPluginState(p);
+					p.click();
+					break;
+				}
+			}
+		}
+	}
+
+	@Override
+	public synchronized void eventItemStateChanged(String action, boolean enable) {
+		for (Plugin p : plugins) {
+			if (action.equals(p.getTrayCommandName())) {
+				if (enable) {
+					enablePlugin(p);
+				} else {
+					disablePlugin(p);
+				}
+
+				break;
+			}
+		}
+	}
+	
+	public Set<String> getPlugins() {
+		Set<String> pluginNames = new TreeSet<String>();
+		for(Plugin o: plugins) {
+			pluginNames.add(o.getTrayCommandName());
+		}
+
+		return pluginNames;
+	}
+	
+	public boolean isPluginEnabled(String plugin) {
+		for (Plugin p : plugins) {
+			if (plugin.equals(p.getTrayCommandName())) {
+				return p.isEnabled();
+			}
+		}
+		return false;
+	}
 
 	public void addPlugin(Plugin p) {
 		if (p == null)
@@ -90,15 +134,18 @@ public class PluginManager {
 		p.init();
 		plugins.add(p);
 
-		MenuItem mi = addMenuItem(p);
+		MenuItem mi = useAwt ? addMenuItem(p) : null;
 
 		if (p.isSwitchable()) {
-			if (p.isMenuEnabledOnStartup()){
+			if (p.isMenuEnabledOnStartup()) {
 				enablePlugin(p);
-				((CheckboxMenuItem)mi).setState(true);
-			}
-			else
-				((CheckboxMenuItem)mi).setState(false);
+				if(useAwt) {
+					((CheckboxMenuItem) mi).setState(true);
+				}
+			} else
+				if(useAwt) {
+					((CheckboxMenuItem) mi).setState(false);
+				}
 		}
 	}
 
@@ -110,8 +157,10 @@ public class PluginManager {
 
 	public void removePlugin(Plugin p) {
 		checkPluginExists(p);
-		removeMenuItem(p.getTrayCommandName());
-		p.dispose();	
+		if(useAwt) {
+			removeMenuItem(p.getTrayCommandName());
+		}
+		p.dispose();
 		plugins.remove(p);
 	}
 
@@ -130,18 +179,23 @@ public class PluginManager {
 	private static PluginManager theManager = null;
 
 	public static PluginManager getInstance() {
+		return getInstance(true);
+	}
+
+	public static PluginManager getInstance(boolean useAwt) {
 
 		if (theManager == null) {
-			theManager = new PluginManager();
+			theManager = new PluginManager(useAwt);
 		}
 		return theManager;
 	}
 
 	private void removeMenuItem(String commandName) {
-		if(systray.getPopup() == null) return;
+		if (systray.getPopup() == null)
+			return;
 		int ic = systray.getPopup().getItemCount();
-		for(int i = 0; i < ic ; i++){
-			if(systray.getPopup().getItem(i).getActionCommand().equals(commandName)){
+		for (int i = 0; i < ic; i++) {
+			if (systray.getPopup().getItem(i).getActionCommand().equals(commandName)) {
 				systray.getPopup().remove(i);
 				break;
 			}
@@ -149,14 +203,13 @@ public class PluginManager {
 	}
 
 	private MenuItem addMenuItem(Plugin p) {
-		
-		if (p.isSwitchable()){
+
+		if (p.isSwitchable()) {
 			CheckboxMenuItem item = new CheckboxMenuItem(p.getTrayCommandName());
 			item.addItemListener(systray);
 			systray.getPopup().add(item);
 			return item;
-		}
-		else{
+		} else {
 			MenuItem item = new MenuItem(p.getTrayCommandName());
 			item.addActionListener(systray);
 			systray.getPopup().add(item);
@@ -176,7 +229,7 @@ public class PluginManager {
 			removePlugin(p);
 		}
 
-		System.exit(SkypeTray.ErrorCodes.NONE.getValue());
+		System.exit(ErrorCodes.NONE.getValue());
 	}
 
 	private void addSkypeListener(ChatMessageListener chatListener) {
@@ -184,7 +237,7 @@ public class PluginManager {
 			Skype.addChatMessageListener(chatListener);
 		} catch (SkypeException se) {
 			System.out.println("Can not add listener.");
-			System.exit(SkypeTray.ErrorCodes.CAN_NOT_ADD_LISTENER.getValue());
+			System.exit(ErrorCodes.CAN_NOT_ADD_LISTENER.getValue());
 		}
 	}
 

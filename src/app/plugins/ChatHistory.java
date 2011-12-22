@@ -8,35 +8,17 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import app.plugins.base.PluginBase;
+
 import com.skype.Chat;
 import com.skype.ChatMessage;
 import com.skype.SkypeException;
 import com.skype.User;
 
-public class ChatHistory implements Plugin {
+public class ChatHistory extends PluginBase {
 
 	private final String userDir = System.getProperty("user.dir") + "\\";
 	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-	boolean enabled;
-	
-	@Override
-	public void click() {
-	}
-
-	@Override
-	public void disable() {
-		enabled = false;
-	}
-
-	@Override
-	public void dispose() {
-		enabled = false;
-	}
-
-	@Override
-	public void enable() {
-		enabled = true;		
-	}
 
 	@Override
 	public String getTrayCommandName() {
@@ -45,17 +27,7 @@ public class ChatHistory implements Plugin {
 
 	@Override
 	public boolean init() {
-		enabled = true;
-		return true;
-	}
-
-	@Override
-	public boolean isMenuEnabledOnStartup() {
-		return true;
-	}
-
-	@Override
-	public boolean isSwitchable() {
+		enable();
 		return true;
 	}
 	

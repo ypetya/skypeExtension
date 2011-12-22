@@ -2,7 +2,7 @@ package app;
 
 import java.awt.SystemTray;
 
-import app.PluginManager;
+import app.console.ErrorCodes;
 import app.plugins.Aggregator;
 import app.plugins.AggregatorFromHistory;
 import app.plugins.ChatHistory;
@@ -13,22 +13,8 @@ import com.skype.Skype;
 
 public class SkypeTray {
 
-	
-	public static enum ErrorCodes {
-		NONE,
-		CAN_NOT_ADD_LISTENER,
-		CAN_NOT_FIND_SKYPE_INSTANCE,
-		TRAY_ICON_NOT_SUPPORTED,
-		TRAY_ICON_ERROR;
-		
-		public int getValue() {
-			return this.ordinal();
-		}
-	}
-
 	/**
-	 * This is the main entry point
-	 * It contains some environmental checks and default error codes
+	 * This is the main entry point of the awt systray application
 	 * 
 	 * @param args
 	 */
@@ -37,7 +23,7 @@ public class SkypeTray {
 			// disable tray option in your application or
 			// perform other actions
 			System.out.println("System tray not supported");
-			System.exit(SkypeTray.ErrorCodes.TRAY_ICON_NOT_SUPPORTED.getValue());
+			System.exit(ErrorCodes.TRAY_ICON_NOT_SUPPORTED.getValue());
 		}
 		if (Skype.isRunning()) {
 			PluginManager m = PluginManager.getInstance();
@@ -51,8 +37,8 @@ public class SkypeTray {
 			Skype.setDeamon(false); // to prevent exiting from this program	
 		} else {
 			System.out.println("Please start a Skype client!");
-			System.exit(SkypeTray.ErrorCodes.CAN_NOT_FIND_SKYPE_INSTANCE.getValue());
-		}		
+			System.exit(ErrorCodes.CAN_NOT_FIND_SKYPE_INSTANCE.getValue());
+		}
 	}
 	
 }

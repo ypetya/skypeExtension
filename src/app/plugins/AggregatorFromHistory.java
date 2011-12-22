@@ -7,13 +7,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import app.plugins.base.PluginBase;
+
 import com.skype.ChatMessage;
 import com.skype.ContactList;
 import com.skype.Friend;
 import com.skype.Skype;
 import com.skype.SkypeException;
 
-public class AggregatorFromHistory implements Plugin {
+public class AggregatorFromHistory extends PluginBase{
 
 	private static final String COMMAND_IMPORT_HISTORY = "aggregator import history (1 month)";
 	private static Thread historyHandler = null;
@@ -101,20 +103,6 @@ public class AggregatorFromHistory implements Plugin {
 	}
 
 	@Override
-	public void enable() {
-	}
-
-	@Override
-	public void disable() {
-	}
-
-	/** We are doing here noting */
-	@Override
-	public boolean init() {
-		return false;
-	}
-
-	@Override
 	public boolean isMenuEnabledOnStartup() {
 		return false;
 	}
@@ -123,13 +111,4 @@ public class AggregatorFromHistory implements Plugin {
 	public boolean isSwitchable() {
 		return false;
 	}
-
-	@Override
-	public void chatMessageReceived(ChatMessage arg0) throws SkypeException {
-	}
-
-	@Override
-	public void chatMessageSent(ChatMessage arg0) throws SkypeException {
-	}
-
 }

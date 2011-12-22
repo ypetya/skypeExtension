@@ -10,10 +10,12 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import app.plugins.base.PluginBase;
+
 import com.skype.ChatMessage;
 import com.skype.SkypeException;
 
-public class Aggregator implements Plugin {
+public class Aggregator extends PluginBase{
 
 	private static final String COMMAND_NEWL_AGGREGATOR = "aggregator";
 
@@ -22,32 +24,9 @@ public class Aggregator implements Plugin {
 			"svn", "authkey=\\w+&", "iwiw", "zoldseg", "gtk", "eleventyone",
 			"zanz.*itori", "^http[s]*://\\s*$", "dogzo", "appspot", "heroku", "subba", "puruttya" };
 
+	@Override
 	public String getTrayCommandName() {
 		return COMMAND_NEWL_AGGREGATOR;
-	}
-
-	public boolean init() {
-		return true;
-	}
-
-	public void dispose() {
-	}
-
-	public void click() {
-	}
-
-	public void enable() {
-	}
-
-	public void disable() {
-	}
-
-	public boolean isMenuEnabledOnStartup() {
-		return true;
-	}
-
-	public boolean isSwitchable() {
-		return true;
 	}
 	
 	public static void handleMessage(ChatMessage received) throws SkypeException {
@@ -124,10 +103,4 @@ public class Aggregator implements Plugin {
 			}
 		}
 	}
-
-	public void chatMessageSent(ChatMessage sent) throws SkypeException {
-		// TODO Auto-generated method stub
-
-	}
-
 }
